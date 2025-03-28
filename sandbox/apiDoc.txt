@@ -1,0 +1,18 @@
+2023.11 teamcity API doc: create and delete projects
+
+https://www.jetbrains.com/help/teamcity/rest/2023.11/create-and-delete-projects.html
+
+To create a project, compose and post a NewProjectDescription entity to:
+
+/app/rest/projects
+Specify name, id, and parentProject via its locator string
+(to define a project under the Root project, use id:_Root).
+
+{
+    "parentProject": {
+        "locator": "locator"
+    },
+    "name": "name",
+    "id": "id",
+    "copyAllAssociatedSettings": true
+}

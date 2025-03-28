@@ -1,0 +1,22 @@
+## Pull 2023.11.1 image (unix/macOs/windows)
+    docker pull jetbrains/teamcity-server
+
+## Run container  2023.11.1 , port 8111
+    unix/macOs
+        docker run --name teamcity-server-instance  \
+            -v $(pwd)/datadir:/data/teamcity_server/datadir \
+            -v $(pwd)/logs:/opt/teamcity/logs  \
+            -p 8111:8111 \
+            jetbrains/teamcity-server:2023.11.1
+    windows
+        docker run --name teamcity-server-instance -v "%cd%/datadir:/data/teamcity_server/datadir" -v "%cd%/logs:/opt/teamcity/logs" -p 8111:8111 jetbrains/teamcity-server:2023.11.1
+
+## Manual setup on ui http://localhost:8111
+    confirm licence
+    select db on ui
+    create admin/admin
+
+## Find superuser token  in logs (no password required)
+    docker logs teamcity-server-instance
+        ## token is changed after every restart
+        ## token is generated after login to ui
