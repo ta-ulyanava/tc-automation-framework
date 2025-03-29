@@ -1,11 +1,15 @@
 package com.example.teamcity.api.models;
 
+import com.example.teamcity.api.annotations.Optional;
+import com.example.teamcity.api.annotations.Parameterizable;
+import com.example.teamcity.api.annotations.Random;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Map;
 
 @Builder
@@ -14,7 +18,7 @@ import java.util.Map;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Project extends BaseModel{
+public class Project extends BaseModel {
     public Project(String id, String name, ParentProject parentProject, Boolean copyAllAssociatedSettings, Project sourceProject) {
         this.id = id;
         this.name = name;
@@ -23,12 +27,28 @@ public class Project extends BaseModel{
         this.sourceProject = sourceProject;
     }
 
+    @Random
+    @Parameterizable
     private String id;
+
+    @Random
+    @Parameterizable
     private String name;
+
+    @Optional
     private ParentProject parentProject;
+
     private Boolean copyAllAssociatedSettings;
+
+    @Optional
     private Map<String, String> projectsIdsMap;
+
+    @Optional
     private Map<String, String> buildTypesIdsMap;
+
+    @Optional
     private Map<String, String> vcsRootsIdsMap;
+
+    @Optional
     private Project sourceProject;
 }
