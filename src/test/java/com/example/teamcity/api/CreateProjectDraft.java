@@ -1,40 +1,59 @@
 package com.example.teamcity.api;
 
 import io.restassured.RestAssured;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.specification.RequestSpecification;
+import org.testng.annotations.Test;
 
 
+import java.util.List;
 import java.util.Map;
 
-
+@Test
 public class CreateProjectDraft {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void main(String[] args) throws Exception{
-        RestAssured.baseURI = "http://192.168.1.34:8111";
-        RestAssured.authentication = RestAssured.basic("admin", "admin");
+    Map<String, Object> payload = Map.of(
+            "parentProject", Map.of("locator", "_Root"),
+            "name", "project100",
+            "id", "project100",
+            "copyAllAssociatedSettings", true
+    );
 
-        Map<String, Object> payload = Map.of(
-                "parentProject", Map.of("locator", "_Root"),
-                "name", "project100",
-                "id", "project100",
-                "copyAllAssociatedSettings", true
-        );
 
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonBody = mapper.writeValueAsString(payload);
 
-        RestAssured
+    public static RequestSpecification getAuthSpec() {
+        return RestAssured
                 .given()
-                    .log().all()
+                    .baseUri("http://192.168.1.34:8111")
+                    .auth().basic("admin", "admin")
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)
-                    .body(jsonBody)
+                    .filters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter()));
+    }
+//        RestAssured
+//
+//                .when()
+//                    .post("/app/rest/projects")
+//                .then()
+//                    .log().all()
+//                    .extract().response();
+//
+//    }
+public static void createProject(Map<String, Object> payload) {
+    try {
+        String jsonBody = objectMapper.writeValueAsString(payload);
+        getAuthSpec()
+                .body(jsonBody)
                 .when()
                     .post("/app/rest/projects")
                 .then()
-                    .log().all()
                     .extract().response();
-
+    } catch (Exception e) {
+        throw new RuntimeException("Failed to create project", e);
     }
+}
 }
