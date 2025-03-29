@@ -15,12 +15,19 @@
         <testng.version>7.10.2</testng.version>
         <rest-assured.version>5.5.0</rest-assured.version>
         <jackson.version>2.18.2</jackson.version>
+        <lombok.version>1.18.30</lombok.version>
+
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
