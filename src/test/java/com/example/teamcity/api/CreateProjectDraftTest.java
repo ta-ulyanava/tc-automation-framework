@@ -1,5 +1,6 @@
 package com.example.teamcity.api;
 
+import com.example.teamcity.api.config.Config;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Test
-public class CreateProjectDraft {
+public class CreateProjectDraftTest {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     Map<String, Object> payload = Map.of(
@@ -28,7 +29,7 @@ public class CreateProjectDraft {
     public static RequestSpecification getAuthSpec() {
         return RestAssured
                 .given()
-                    .baseUri("http://192.168.1.34:8111")
+                    .baseUri("http://" + Config.getProperty("host"))
                     .auth().basic("admin", "admin")
                     .contentType(ContentType.JSON)
                     .accept(ContentType.JSON)

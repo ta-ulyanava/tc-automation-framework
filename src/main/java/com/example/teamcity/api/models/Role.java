@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Role extends BaseModel{
+public class Role extends BaseModel {
     @Builder.Default
-    private String roleId="SYSTEM_ADMIN";
+    private String roleId = "SYSTEM_ADMIN";
 }
