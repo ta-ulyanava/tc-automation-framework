@@ -4,6 +4,7 @@ import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.models.BaseModel;
 import com.example.teamcity.api.requests.baseRequests.UncheckedBase;
 import com.example.teamcity.api.spec.RequestSpecs;
+import io.qameta.allure.Step;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ public class TestDataStorage {
      * @param apiEndpoint API endpoint where the entity was created
      * @param id          ID of the created entity
      */
+    @Step("Add created entity for cleanup: {apiEndpoint} / {id}")
     public void addCreatedEntity(ApiEndpoint apiEndpoint, String id) {
         if (id != null) {
             createdEntitiesMap.computeIfAbsent(apiEndpoint, key -> new HashSet<>()).add(id);
@@ -84,6 +86,7 @@ public class TestDataStorage {
      * @param apiEndpoint API endpoint where the entity was created
      * @param model       model instance to extract the ID or locator from
      */
+    @Step("Add created entity by model for cleanup: {apiEndpoint}")
     public void addCreatedEntity(ApiEndpoint apiEndpoint, BaseModel model) {
         addCreatedEntity(apiEndpoint, getEntityIdOrLocator(model));
     }
@@ -92,6 +95,7 @@ public class TestDataStorage {
      * Sends DELETE requests to remove all tracked entities from the server.
      * Clears the storage afterward.
      */
+    @Step("Clean up all tracked test entities")
     public void cleanupTrackedEntities() {
         createdEntitiesMap.forEach(((endpoint, ids) -> ids.forEach(id -> new UncheckedBase(RequestSpecs.superUserAuthSpec(), endpoint).delete(id)))
 

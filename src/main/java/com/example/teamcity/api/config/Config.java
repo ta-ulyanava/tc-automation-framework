@@ -3,6 +3,7 @@ package com.example.teamcity.api.config;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
 /**
  * Singleton class responsible for loading and providing access to configuration properties
  * from the {@code config.properties} file located in the classpath.
@@ -17,6 +18,7 @@ public class Config {
         properties = new Properties();
         loadProperties(CONFIG_PROPERTIES);
     }
+
     /**
      * Returns the singleton instance of the Config class.
      *

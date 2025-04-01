@@ -28,6 +28,7 @@ public class RequestSpecs {
         reqBuilder.addFilters(List.of(new RequestLoggingFilter(), new ResponseLoggingFilter()));
         return reqBuilder;
     }
+
     /**
      * Creates a request specification without authentication.
      *
@@ -47,6 +48,7 @@ public class RequestSpecs {
         requestBuilder.setBaseUri("http://:%s@%s".formatted(Config.getProperty("superUserToken"), Config.getProperty("host")));
         return requestBuilder.build();
     }
+
     /**
      * Creates a request specification using basic authentication with given user credentials.
      *

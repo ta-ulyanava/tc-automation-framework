@@ -4,13 +4,20 @@ import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.generators.RandomData;
 import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.models.Project;
+import io.qameta.allure.Issue;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 //TODO: Add project helper and validation spec for negative TCs
+//TODO: Add assertions to verify the project creation via DTO
 //TODO: Add Allure and annotations
-//TODO: Add Github workflow?
+//TODO: Add Github/ gilab CI/CD workflow?
+//TODO: Extend fraimework with another endpoints (e.g., search, auth
+//TODO: Add UI tests
+//TODO: Add DB tests
+//TODO: Add performance tests (Jmeter)
+
 @Test(groups = {"Regression"})
 public class ProjectCrudTest extends BaseApiTest {
 
@@ -19,7 +26,7 @@ public class ProjectCrudTest extends BaseApiTest {
     public void userCreatesProjectWithMandatoryFieldsOnlyTest() {
         Project project = testData.getProject();
         Project createdProject = userCheckedRequest.getRequest(ApiEndpoint.PROJECTS, Project.class).create(project).as(Project.class);
-// TODO: Add assertions to verify the project creation via DTO
+
         softy.assertEquals(createdProject.getId(), project.getId(), "Project ID should match");
         softy.assertEquals(createdProject.getName(), project.getName(), "Project name should match");
         softy.assertNotNull(createdProject.getParentProject(), "Parent project should not be null");
@@ -27,10 +34,11 @@ public class ProjectCrudTest extends BaseApiTest {
         softy.assertEquals(createdProject.getParentProject().getId(), "_Root", "Parent project should be '_Root' by default");
         softy.assertAll();
     }
+
     // =================== PROJECT NAME VALIDATION ===================
     @Test(description = "User should not be able to create Project with empty name", groups = {"Negative", "CRUD"})
     public void userCannotCreateProjectWithEmptyNameTest() {
-        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.randomString(), "");
+        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), "");
         var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
         response.then().statusCode(400);
         String responseBody = response.getBody().asString();
@@ -43,9 +51,9 @@ public class ProjectCrudTest extends BaseApiTest {
     }
 
     @Test(description = "User should not be able to create Project with name that is just a space", groups = {"Negative", "CRUD"})
-//"Bug in API: returned 500 error instead of 400")
+    @Issue("Bug in API: returned 500 error instead of 400")
     public void userCannotCreateProjectWithSpaceOnlyNameTest() {
-        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.randomString(), " ");
+        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), " ");
         var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
         response.then().statusCode(400);
         String responseBody = response.getBody().asString();

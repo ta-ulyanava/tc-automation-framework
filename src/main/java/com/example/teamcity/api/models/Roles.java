@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Roles extends BaseModel{
+public class Roles extends BaseModel {
     private List<Role> role;
 }

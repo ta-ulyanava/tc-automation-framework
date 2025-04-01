@@ -3,6 +3,7 @@ package com.example.teamcity.api.requests;
 import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.models.BaseModel;
 import com.example.teamcity.api.requests.baseRequests.CheckedBase;
+import io.qameta.allure.Step;
 import io.restassured.specification.RequestSpecification;
 
 import java.util.EnumMap;
@@ -32,7 +33,7 @@ public class CheckedRequest {
      * @param <T>         expected model type
      * @return CheckedBase instance for the endpoint
      */
-
+    @Step("Get checked request for endpoint: {apiEndpoint}")
     public <T extends BaseModel> CheckedBase<T> getRequest(ApiEndpoint apiEndpoint) {
         return (CheckedBase<T>) requests.get(apiEndpoint);
     }
@@ -45,7 +46,6 @@ public class CheckedRequest {
      * @param <T>         model type
      * @return CheckedBase instance for the endpoint
      */
-
     public <T extends BaseModel> CheckedBase<T> getRequest(ApiEndpoint apiEndpoint, Class<T> modelClass) {
         CheckedBase<?> base = requests.get(apiEndpoint);
         if (!modelClass.isAssignableFrom(apiEndpoint.getModelClass())) {

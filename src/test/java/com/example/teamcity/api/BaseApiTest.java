@@ -7,6 +7,7 @@ import com.example.teamcity.api.models.User;
 import com.example.teamcity.api.requests.CheckedRequest;
 import com.example.teamcity.api.requests.UncheckedRequest;
 import com.example.teamcity.api.spec.RequestSpecs;
+import io.qameta.allure.Step;
 import org.testng.annotations.BeforeMethod;
 
 public class BaseApiTest extends BaseTest {
@@ -14,6 +15,20 @@ public class BaseApiTest extends BaseTest {
     protected CheckedRequest userCheckedRequest;
     protected UncheckedRequest superUserUncheckedRequest = new UncheckedRequest(RequestSpecs.superUserAuthSpec());
 
+
+    /**
+     * Prepares API request objects for the test user before each test method.
+     * <p>
+     * - Creates a new user via API using superuser credentials<br>
+     * - Adds the user to {@link TestDataStorage} for automatic cleanup<br>
+     * - Initializes {@link CheckedRequest} and {@link UncheckedRequest} for the created user
+     * </p>
+     * <p>
+     * This method runs before every test and ensures that all user-specific API requests
+     * are properly authenticated and ready to use.
+     * </p>
+     */
+    @Step("Configure user-specific Checked and Unchecked requests")
     @BeforeMethod(alwaysRun = true)
     public void configureUserRequests() {
         User createdUser = superUserUncheckedRequest.getRequest(ApiEndpoint.USERS).create(testData.getUser()).as(User.class);

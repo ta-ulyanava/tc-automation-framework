@@ -5,6 +5,8 @@ import com.example.teamcity.api.annotations.Parameterizable;
 import com.example.teamcity.api.annotations.Random;
 import com.example.teamcity.api.models.BaseModel;
 import com.example.teamcity.api.models.TestData;
+import io.qameta.allure.Step;
+import lombok.Builder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.Builder;
 /**
  * Utility class for generating test data objects using reflection and annotations.
  * <p>
@@ -24,6 +25,7 @@ public final class TestDataGenerator {
 
     private TestDataGenerator() {
     }
+
     /**
      * Generates a new test entity of the given model class with optional parameterized values.
      *
@@ -33,6 +35,7 @@ public final class TestDataGenerator {
      * @param <T>             the type of model to generate
      * @return generated model instance
      */
+    @Step("Generate instance of class {generatorClass}")
     public static <T extends BaseModel> T generateTestData(List<BaseModel> generatedModels, Class<T> generatorClass, Object... parameters) {
         try {
             var instance = generatorClass.getDeclaredConstructor().newInstance();
@@ -56,7 +59,7 @@ public final class TestDataGenerator {
                 }
 
                 if (field.isAnnotationPresent(Random.class) && field.getType().equals(String.class)) {
-                    field.set(instance, RandomData.randomString());
+                    field.set(instance, RandomData.getRandomStringWithTestPrefix());
                     continue;
                 }
 
@@ -131,11 +134,13 @@ public final class TestDataGenerator {
             throw new IllegalStateException("Failed to generate TestData: reflection error during field population", e);
         }
     }
+
     /**
-     * Generates a complete {@link TestData} instance including nested user, project, and buildType entities.
+     * Generates a fully populated instance of {@link TestData}, initializing all its BaseModel fields.
      *
      * @return generated TestData instance
      */
+    @Step("Generate TestData with all nested BaseModel fields")
     public static TestData generateTestData() {
         try {
             var instance = TestData.class.getDeclaredConstructor().newInstance();
@@ -155,11 +160,16 @@ public final class TestDataGenerator {
             throw new IllegalStateException("Failed to generate TestData: reflection error during field population", e);
         }
     }
+
     /**
-     * Generates a complete {@link TestData} instance including nested user, project, and buildType entities.
+     * Shortcut for generating models without a predefined list of generated models.
      *
-     * @return generated TestData
+     * @param generatorClass model class to instantiate
+     * @param parameters     optional field values
+     * @param <T>            type extending BaseModel
+     * @return generated model instance
      */
+    @Step("Generate model {generatorClass} with parameters")
     public static <T extends BaseModel> T generateTestData(Class<T> generatorClass, Object... parameters) {
         return generateTestData(Collections.emptyList(), generatorClass, parameters);
     }

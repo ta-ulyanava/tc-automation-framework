@@ -5,6 +5,7 @@ import com.example.teamcity.api.generators.TestDataStorage;
 import com.example.teamcity.api.models.BaseModel;
 import com.example.teamcity.api.requests.CrudInterface;
 import com.example.teamcity.api.requests.Request;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
@@ -46,6 +47,7 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
      * @param model the entity to be created
      * @return the API response
      */
+    @Step("Create entity via API: {model}")
     @Override
     public Response create(BaseModel model) {
         Response response = uncheckedBase.create(model);
@@ -61,6 +63,7 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
      * @param id the ID of the entity
      * @return the entity
      */
+    @Step("Read entity by ID: {id}")
     @Override
     public T read(String id) {
         Response response = uncheckedBase.read(id);
@@ -75,6 +78,7 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
      * @param model the new data
      * @return the updated entity
      */
+    @Step("Update entity ID: {id} with new model")
     @Override
     public T update(String id, BaseModel model) {
         Response response = uncheckedBase.update(id, model);
@@ -88,6 +92,7 @@ public final class CheckedBase<T extends BaseModel> extends Request implements C
      * @param id the ID of the entity to delete
      * @return the raw response as string
      */
+    @Step("Delete entity by ID: {id}")
     @Override
     public Object delete(String id) {
         Response response = uncheckedBase.delete(id);
