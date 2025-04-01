@@ -1,14 +1,18 @@
 package com.example.teamcity.api;
 
 import com.example.teamcity.api.enums.ApiEndpoint;
+import com.example.teamcity.api.generators.RandomData;
+import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.models.Project;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 
 @Test(groups = {"Regression"})
 public class ProjectCrudTest extends BaseApiTest {
 
-
+    // =================== PROJECT CREATION ===================
     @Test(description = "User should be able to create a project with the minimum required fields under Root project", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithMandatoryFieldsOnlyTest() {
         Project project = testData.getProject();
@@ -21,10 +25,33 @@ public class ProjectCrudTest extends BaseApiTest {
         softy.assertEquals(createdProject.getParentProject().getId(), "_Root", "Parent project should be '_Root' by default");
         softy.assertAll();
     }
+    // =================== PROJECT NAME VALIDATION ===================
+    @Test(description = "User should not be able to create Project with empty name", groups = {"Negative", "CRUD"})
+    public void userCannotCreateProjectWithEmptyNameTest() {
+        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.randomString(), "");
+        var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
+        response.then().statusCode(400);
+        String responseBody = response.getBody().asString();
+        softy.assertTrue(responseBody.contains("Project name cannot be empty"), "Should clearly indicate empty project name issue");
+        softy.assertFalse(responseBody.contains("createdProject"), "No project should be created on invalid input");
+        softy.assertAll();
+    }
+
 // =================== PROJECT CREATION ===================
 // Test: create project with required fields only
 // - Ensure project is created when only ID and name are provided
 // - If no parent is specified, it should default to _Root
+
+// =================== PROJECT NAME VALIDATION ===================
+// Test: cannot create project with empty name
+// Test: cannot create project with name that is just a space
+// Test: create project with special characters in name
+// Test: create project with localized name
+// Test: create project with 1-character name
+// Test: create project with 500-character name
+// Test: cannot create project with duplicate name (case-sensitive and insensitive)
+// Test: create project with digits-only name
+// Test: create project with spaces in the middle of the name
 
 // =================== COPY SETTINGS ===================
 // Test: create project with copyAllAssociatedSettings = true
@@ -67,16 +94,6 @@ public class ProjectCrudTest extends BaseApiTest {
 // Test: cannot create project with space in the middle of ID
 // Test: create project with valid ID (letters, digits, underscores)
 
-// =================== PROJECT NAME VALIDATION ===================
-// Test: cannot create project with empty name
-// Test: cannot create project with name that is just a space
-// Test: create project with special characters in name
-// Test: create project with localized name
-// Test: create project with 1-character name
-// Test: create project with 500-character name
-// Test: cannot create project with duplicate name (case-sensitive and insensitive)
-// Test: create project with digits-only name
-// Test: create project with spaces in the middle of the name
 
 // =================== PARENT PROJECT VALIDATION ===================
 // Test: cannot create project with non-existent parent project locator
