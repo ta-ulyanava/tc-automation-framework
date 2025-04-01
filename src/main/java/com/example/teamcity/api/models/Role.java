@@ -14,4 +14,6 @@ import lombok.NoArgsConstructor;
 public class Role extends BaseModel {
     @Builder.Default
     private String roleId = "SYSTEM_ADMIN";
+    @Builder.Default
+    private String scope = "g";
 }
