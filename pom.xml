@@ -16,6 +16,7 @@
         <rest-assured.version>5.5.0</rest-assured.version>
         <jackson.version>2.18.2</jackson.version>
         <lombok.version>1.18.30</lombok.version>
+        <allure.version>2.29.1</allure.version>
 
     </properties>
     <dependencies>
@@ -48,6 +49,16 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
         </dependency>
     </dependencies>
 </project>
