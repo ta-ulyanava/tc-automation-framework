@@ -8,7 +8,9 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-
+//TODO: Add project helper and validation spec for negative TCs
+//TODO: Add Allure and annotations
+//TODO: Add Github workflow?
 @Test(groups = {"Regression"})
 public class ProjectCrudTest extends BaseApiTest {
 
@@ -32,10 +34,27 @@ public class ProjectCrudTest extends BaseApiTest {
         var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
         response.then().statusCode(400);
         String responseBody = response.getBody().asString();
-        softy.assertTrue(responseBody.contains("Project name cannot be empty"), "Should clearly indicate empty project name issue");
-        softy.assertFalse(responseBody.contains("createdProject"), "No project should be created on invalid input");
+        System.out.println("Response body: " + responseBody);
+        softy.assertTrue(responseBody.contains("Project name cannot be empty."),
+                "Expected error message: 'Project name cannot be empty.'");
+        softy.assertFalse(responseBody.contains("createdProject"),
+                "Response should not contain any indication that the project was created");
         softy.assertAll();
     }
+
+    @Test(description = "User should not be able to create Project with name that is just a space", groups = {"Negative", "CRUD"})
+//"Bug in API: returned 500 error instead of 400")
+    public void userCannotCreateProjectWithSpaceOnlyNameTest() {
+        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.randomString(), " ");
+        var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
+        response.then().statusCode(400);
+        String responseBody = response.getBody().asString();
+        softy.assertTrue(responseBody.toLowerCase().contains("name"), "Response should mention 'name' field");
+        softy.assertTrue(responseBody.contains("Given project name is empty"),
+                "Expected error message: 'Given project name is empty'");
+        softy.assertAll();
+    }
+
 
 // =================== PROJECT CREATION ===================
 // Test: create project with required fields only
@@ -43,8 +62,6 @@ public class ProjectCrudTest extends BaseApiTest {
 // - If no parent is specified, it should default to _Root
 
 // =================== PROJECT NAME VALIDATION ===================
-// Test: cannot create project with empty name
-// Test: cannot create project with name that is just a space
 // Test: create project with special characters in name
 // Test: create project with localized name
 // Test: create project with 1-character name
