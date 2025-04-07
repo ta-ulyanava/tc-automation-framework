@@ -1,5 +1,6 @@
 package com.example.teamcity.api;
 
+import com.example.teamcity.api.constants.TestConstants;
 import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.generators.RandomData;
 import com.example.teamcity.api.generators.TestDataGenerator;
@@ -31,8 +32,7 @@ public class ProjectCrudTest extends BaseApiTest {
         Project project = testData.getProject();
         Project createdProject = userCheckedRequest.getRequest(ApiEndpoint.PROJECTS, Project.class).create(project).as(Project.class);
         EntityValidator.validateAllEntityFieldsIgnoring(project, createdProject, List.of("parentProject"), softy);
-        // TODO: ?Remove magic string _Root?
-        softy.assertEquals(createdProject.getParentProject().getId(), "_Root", "Parent project should be '_Root' by default");
+        softy.assertEquals(createdProject.getParentProject().getId(), TestConstants.ROOT_PROJECT_ID, "Parent project should be '_Root' by default");
         softy.assertAll();
     }
 
