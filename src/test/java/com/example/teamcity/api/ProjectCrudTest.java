@@ -58,7 +58,7 @@ public class ProjectCrudTest extends BaseApiTest {
     }
     @Feature("Project Name Validation")
     @Story("Special Characters in Project Name")
-    @Test(description = "User should be able to create a Project with special characters in name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with special characters in name", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithSpecialCharactersInNameTest() {
         Project project = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), TestConstants.SPECIAL_CHARACTERS);
         Project createdProject = projectHelper.createProject(superUserCheckRequests, project);
@@ -68,7 +68,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Localized Project Name")
-    @Test(description = "User should be able to create a Project with a localized name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with a localized name", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithLocalizedNameTest() {
         Project localizedProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), TestConstants.LOCALIZATION_CHARACTERS);
         Project createdProject = projectHelper.createProject(superUserCheckRequests, localizedProject);
@@ -78,7 +78,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("One Character Project Name")
-    @Test(description = "User should be able to create a Project with a name of length 1", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with a name of length 1", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithOneCharacterNameTest() {
         Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), "A");
         Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
@@ -88,7 +88,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Maximum Length Project Name")
-    @Test(description = "User should be able to create a Project with a name of 500 characters", groups = {"Positive", "CRUD", "CornerCase", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with a name of 500 characters", groups = {"Positive", "CRUD", "CornerCase"})
     public void userCreatesProjectWith500LengthNameTest() {
         String maxLengthName = RandomData.getRandomString(500);
         Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), maxLengthName);
@@ -99,7 +99,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Duplicate Name with Different Case")
-    @Test(description = "User should not be able to create a Project with an existing name in a different case", groups = {"Negative", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should not be able to create a Project with an existing name in a different case", groups = {"Negative", "CRUD"})
     public void userCannotCreateProjectWithExistingNameDifferentCaseTest() {
         Project existingProject = projectHelper.createProject(userCheckedRequest, testData.getProject());
         String duplicateName = existingProject.getName().toUpperCase();
@@ -111,7 +111,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Duplicate Name")
-    @Test(description = "User should not be able to create a Project with an existing name", groups = {"Negative", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should not be able to create a Project with an existing name", groups = {"Negative", "CRUD"})
     public void userCannotCreateProjectWithExistingNameTest() {
         Project existingProject = projectHelper.createProject(userCheckedRequest, testData.getProject());
         Project duplicateProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), existingProject.getName());
@@ -122,7 +122,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Digits Only Name")
-    @Test(description = "User should be able to create a Project with a name consisting only of digits", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with a name consisting only of digits", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithDigitsOnlyNameTest() {
         Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), RandomData.getRandomDigits(6));
         Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
@@ -132,7 +132,7 @@ public class ProjectCrudTest extends BaseApiTest {
 
     @Feature("Project Name Validation")
     @Story("Spaces In Name")
-    @Test(description = "User should be able to create a Project with spaces in the middle of the name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    @Test(description = "User should be able to create a Project with spaces in the middle of the name", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithSpacesInNameTest() {
         String uniqueProjectName = RandomData.getUniqueNameWithTestPrefix().substring(0, 5) + " " + RandomData.getUniqueNameWithTestPrefix().substring(5);
         Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), uniqueProjectName);
