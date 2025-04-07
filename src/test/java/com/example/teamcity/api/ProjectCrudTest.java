@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-//TODO: Add project helper
+
 //TODO: Add Github/ gilab CI/CD workflow?
 //TODO: Extend fraimework with another endpoints (e.g., search, auth
 //TODO: Add UI tests
@@ -30,7 +30,7 @@ public class ProjectCrudTest extends BaseApiTest {
     @Test(description = "User should be able to create a project with the minimum required fields under Root project", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithMandatoryFieldsOnlyTest() {
         Project project = testData.getProject();
-        Project createdProject = userCheckedRequest.getRequest(ApiEndpoint.PROJECTS, Project.class).create(project).as(Project.class);
+        Project createdProject = projectHelper.createProject(userCheckedRequest, project);
         EntityValidator.validateAllEntityFieldsIgnoring(project, createdProject, List.of("parentProject"), softy);
         softy.assertEquals(createdProject.getParentProject().getId(), TestConstants.ROOT_PROJECT_ID, "Parent project should be '_Root' by default");
         softy.assertAll();
