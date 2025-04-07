@@ -1,4 +1,4 @@
-package com.example.teamcity.api.spec;
+package com.example.teamcity.api.spec.request;
 
 import com.example.teamcity.api.config.Config;
 import com.example.teamcity.api.models.User;

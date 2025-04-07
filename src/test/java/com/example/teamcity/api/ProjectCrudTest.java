@@ -4,16 +4,17 @@ import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.generators.RandomData;
 import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.models.Project;
+import com.example.teamcity.api.spec.response.IncorrectDataSpecs;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
+import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-//TODO: Add project helper and validation spec for negative TCs
+//TODO: Add project helper
 //TODO: Add assertions to verify the project creation via DTO
-//TODO: Add Allure and annotations
 //TODO: Add Github/ gilab CI/CD workflow?
 //TODO: Extend fraimework with another endpoints (e.g., search, auth
 //TODO: Add UI tests
@@ -44,28 +45,19 @@ public class ProjectCrudTest extends BaseApiTest {
     @Story("Empty Project Name")
     @Test(description = "User should not be able to create Project with empty name", groups = {"Negative", "CRUD"})
     public void userCannotCreateProjectWithEmptyNameTest() {
-        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), "");
-        var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
-        response.then().statusCode(400);
-        String responseBody = response.getBody().asString();
-        System.out.println("Response body: " + responseBody);
-        softy.assertTrue(responseBody.contains("Project name cannot be empty."),
-                "Expected error message: 'Project name cannot be empty.'");
-        softy.assertFalse(responseBody.contains("createdProject"),
-                "Response should not contain any indication that the project was created");
+        Project invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), "");
+        Response response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
+        response.then().spec(IncorrectDataSpecs.badRequestEmptyField("Project", "name"));
         softy.assertAll();
     }
-
-    @Test(description = "User should not be able to create Project with name that is just a space", groups = {"Negative", "CRUD"})
+    @Feature("Project Name Validation")
+    @Story("Space in Project Name")
+    @Test(description = "User should not be able to create Project with name that is just a space", groups = {"Negative", "CRUD","KnownBugs"})
     @Issue("Bug in API: returned 500 error instead of 400")
     public void userCannotCreateProjectWithSpaceOnlyNameTest() {
-        var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), " ");
-        var response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
-        response.then().statusCode(400);
-        String responseBody = response.getBody().asString();
-        softy.assertTrue(responseBody.toLowerCase().contains("name"), "Response should mention 'name' field");
-        softy.assertTrue(responseBody.contains("Given project name is empty"),
-                "Expected error message: 'Given project name is empty'");
+        Project invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), " ");
+        Response response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
+        response.then().spec(IncorrectDataSpecs.badRequestEmptyField("project", "name"));
         softy.assertAll();
     }
 

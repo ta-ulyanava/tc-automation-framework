@@ -3,7 +3,7 @@ package com.example.teamcity.api.generators;
 import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.models.BaseModel;
 import com.example.teamcity.api.requests.baseRequests.UncheckedBase;
-import com.example.teamcity.api.spec.RequestSpecs;
+import com.example.teamcity.api.spec.request.RequestSpecs;
 import io.qameta.allure.Step;
 
 import java.util.EnumMap;

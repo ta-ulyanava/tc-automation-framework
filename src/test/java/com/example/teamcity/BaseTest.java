@@ -3,7 +3,7 @@ package com.example.teamcity;
 import com.example.teamcity.api.generators.TestDataStorage;
 import com.example.teamcity.api.models.TestData;
 import com.example.teamcity.api.requests.CheckedRequest;
-import com.example.teamcity.api.spec.RequestSpecs;
+import com.example.teamcity.api.spec.request.RequestSpecs;
 import io.qameta.allure.Step;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
