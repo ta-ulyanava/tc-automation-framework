@@ -4,7 +4,9 @@ import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.generators.RandomData;
 import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.models.Project;
+import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
+import io.qameta.allure.Story;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 public class ProjectCrudTest extends BaseApiTest {
 
     // =================== PROJECT CREATION ===================
+    @Feature("Projects creation")
+    @Story("Create project with required fields only")
     @Test(description = "User should be able to create a project with the minimum required fields under Root project", groups = {"Positive", "CRUD"})
     public void userCreatesProjectWithMandatoryFieldsOnlyTest() {
         Project project = testData.getProject();
@@ -36,6 +40,8 @@ public class ProjectCrudTest extends BaseApiTest {
     }
 
     // =================== PROJECT NAME VALIDATION ===================
+    @Feature("Project Name Validation")
+    @Story("Empty Project Name")
     @Test(description = "User should not be able to create Project with empty name", groups = {"Negative", "CRUD"})
     public void userCannotCreateProjectWithEmptyNameTest() {
         var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), "");
