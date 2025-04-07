@@ -5,6 +5,8 @@ import com.example.teamcity.api.enums.ApiEndpoint;
 import com.example.teamcity.api.generators.RandomData;
 import com.example.teamcity.api.generators.TestDataGenerator;
 import com.example.teamcity.api.models.Project;
+import com.example.teamcity.api.requests.UncheckedRequest;
+import com.example.teamcity.api.spec.request.RequestSpecs;
 import com.example.teamcity.api.spec.response.IncorrectDataSpecs;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
@@ -13,6 +15,9 @@ import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import java.util.List;
+
+import static com.example.teamcity.api.constants.TestConstants.SQL_INJECTION_PAYLOAD;
+import static com.example.teamcity.api.constants.TestConstants.XSS_PAYLOAD;
 
 
 //TODO: Add Github/ gilab CI/CD workflow?
@@ -144,21 +149,55 @@ public class ProjectCrudTest extends BaseApiTest {
 
 
 // =================== PROJECT NAME VALIDATION =================== //
+// =================== AUTHORIZATIONS TESTS  =================== //
+@Feature("Authorization")
+@Story("User without authentication should not create a project")
+@Test(description = "User should not be able to create a project without authentication", groups = {"Negative", "Auth"})
+public void userCannotCreateProjectWithoutAuthTest() {
+    var unauthRequest = new UncheckedRequest(RequestSpecs.unauthSpec());
+    var invalidProject = TestDataGenerator.generateTestData(List.of(), Project.class, RandomData.getRandomStringWithTestPrefix(), RandomData.getRandomStringWithTestPrefix());
+    var response = unauthRequest.getRequest(ApiEndpoint.PROJECTS).create(invalidProject);
+    response.then().spec(com.example.teamcity.api.spec.responce.AccessErrorSpecs.authenticationRequired());
+    softy.assertAll();
+}
 
+    // =================== AUTHORIZATIONS TESTS (AUTH_TAG) =================== //
+
+    // =================== SECURITY TESTS =================== //
+// Validate protection against XSS and SQL injection in the project name
+// Expect the server to store the payload as plain text without executing any scripts
+// No need to perform such checks for the ID field, since it is already validated against special characters
+
+
+    @Feature("Security")
+    @Story("XSS Injection Prevention")
+    @Test(description = "User should be able to create a Project with an XSS payload in name (payload stored as text)", groups = {"Positive", "Security", "CRUD"})
+    public void userCreatesProjectWithXSSInNameTest() {
+        Project projectWithXSS = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), XSS_PAYLOAD);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, projectWithXSS);
+        EntityValidator.validateAllEntityFieldsIgnoring(projectWithXSS, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+
+    @Feature("Security")
+    @Story("SQL Injection Prevention")
+    @Test(description = "User should be able to create a Project with an SQL injection payload in name (payload stored as text)", groups = {"Positive", "Security", "CRUD"})
+    public void userCreatesProjectWithSQLInjectionTest() {
+        Project projectWithSQL = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), SQL_INJECTION_PAYLOAD);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, projectWithSQL);
+        EntityValidator.validateAllEntityFieldsIgnoring(projectWithSQL, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+// =================== SECURITY TESTS (SEC_TAG) =================== //
 
 // =================== PROJECT CREATION ===================
 // Test: create project with required fields only
 // - Ensure project is created when only ID and name are provided
 // - If no parent is specified, it should default to _Root
 
-// =================== PROJECT NAME VALIDATION ===================
-// Test: create project with special characters in name
-// Test: create project with localized name
-// Test: create project with 1-character name
-// Test: create project with 500-character name
-// Test: cannot create project with duplicate name (case-sensitive and insensitive)
-// Test: create project with digits-only name
-// Test: create project with spaces in the middle of the name
+
 
 // =================== COPY SETTINGS ===================
 // Test: create project with copyAllAssociatedSettings = true
@@ -207,12 +246,6 @@ public class ProjectCrudTest extends BaseApiTest {
 // Test: cannot create project where project ID == parent ID
 // Test: cannot create project with empty parent locator
 
-// =================== AUTHORIZATION ===================
-// Test: unauthenticated user cannot create a project
-
-// =================== SECURITY ===================
-// Test: create project with XSS payload in name (should be stored as plain text)
-// Test: create project with SQL injection payload in name (should be stored as plain text)
 
 // =================== ROLE-BASED ACCESS CONTROL ===================
 // Test: user with allowed role (e.g., PROJECT_ADMIN) can create regular project
