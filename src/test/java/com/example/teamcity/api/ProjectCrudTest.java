@@ -24,7 +24,7 @@ import java.util.List;
 @Test(groups = {"Regression"})
 public class ProjectCrudTest extends BaseApiTest {
 
-    // =================== PROJECT CREATION ===================
+    // =================== PROJECT CREATION =================== //
     @Feature("Projects creation")
     @Story("Create project with required fields only")
     @Test(description = "User should be able to create a project with the minimum required fields under Root project", groups = {"Positive", "CRUD"})
@@ -36,7 +36,7 @@ public class ProjectCrudTest extends BaseApiTest {
         softy.assertAll();
     }
 
-    // =================== PROJECT NAME VALIDATION ===================
+    // =================== PROJECT NAME VALIDATION =================== //
     @Feature("Project Name Validation")
     @Story("Empty Project Name")
     @Test(description = "User should not be able to create Project with empty name", groups = {"Negative", "CRUD"})
@@ -56,6 +56,93 @@ public class ProjectCrudTest extends BaseApiTest {
         response.then().spec(IncorrectDataSpecs.badRequestEmptyField("project", "name"));
         softy.assertAll();
     }
+    @Feature("Project Name Validation")
+    @Story("Special Characters in Project Name")
+    @Test(description = "User should be able to create a Project with special characters in name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWithSpecialCharactersInNameTest() {
+        Project project = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), TestConstants.SPECIAL_CHARACTERS);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, project);
+        EntityValidator.validateAllEntityFieldsIgnoring(project, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Localized Project Name")
+    @Test(description = "User should be able to create a Project with a localized name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWithLocalizedNameTest() {
+        Project localizedProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), TestConstants.LOCALIZATION_CHARACTERS);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, localizedProject);
+        EntityValidator.validateAllEntityFieldsIgnoring(localizedProject, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("One Character Project Name")
+    @Test(description = "User should be able to create a Project with a name of length 1", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWithOneCharacterNameTest() {
+        Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), "A");
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
+        EntityValidator.validateAllEntityFieldsIgnoring(validProject, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Maximum Length Project Name")
+    @Test(description = "User should be able to create a Project with a name of 500 characters", groups = {"Positive", "CRUD", "CornerCase", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWith500LengthNameTest() {
+        String maxLengthName = RandomData.getRandomString(500);
+        Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), maxLengthName);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
+        EntityValidator.validateAllEntityFieldsIgnoring(validProject, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Duplicate Name with Different Case")
+    @Test(description = "User should not be able to create a Project with an existing name in a different case", groups = {"Negative", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCannotCreateProjectWithExistingNameDifferentCaseTest() {
+        Project existingProject = projectHelper.createProject(userCheckedRequest, testData.getProject());
+        String duplicateName = existingProject.getName().toUpperCase();
+        Project duplicateProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), duplicateName);
+        Response response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(duplicateProject);
+        response.then().spec(IncorrectDataSpecs.badRequestDuplicatedField("Project", "name", duplicateName));
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Duplicate Name")
+    @Test(description = "User should not be able to create a Project with an existing name", groups = {"Negative", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCannotCreateProjectWithExistingNameTest() {
+        Project existingProject = projectHelper.createProject(userCheckedRequest, testData.getProject());
+        Project duplicateProject = TestDataGenerator.generateTestData(Project.class, RandomData.getRandomStringWithTestPrefix(), existingProject.getName());
+        Response response = userUncheckedRequest.getRequest(ApiEndpoint.PROJECTS).create(duplicateProject);
+        response.then().spec(IncorrectDataSpecs.badRequestDuplicatedField("Project", "name", existingProject.getName()));
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Digits Only Name")
+    @Test(description = "User should be able to create a Project with a name consisting only of digits", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWithDigitsOnlyNameTest() {
+        Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), RandomData.getRandomDigits(6));
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
+        EntityValidator.validateAllEntityFieldsIgnoring(validProject, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+    @Feature("Project Name Validation")
+    @Story("Spaces In Name")
+    @Test(description = "User should be able to create a Project with spaces in the middle of the name", groups = {"Positive", "CRUD", "PROJECT_NAME_VALIDATION_TAG"})
+    public void userCreatesProjectWithSpacesInNameTest() {
+        String uniqueProjectName = RandomData.getUniqueNameWithTestPrefix().substring(0, 5) + " " + RandomData.getUniqueNameWithTestPrefix().substring(5);
+        Project validProject = TestDataGenerator.generateTestData(Project.class, RandomData.getUniqueIdWithTestPrefix(), uniqueProjectName);
+        Project createdProject = projectHelper.createProject(superUserCheckRequests, validProject);
+        EntityValidator.validateAllEntityFieldsIgnoring(validProject, createdProject, List.of("parentProject"), softy);
+        softy.assertAll();
+    }
+
+
+// =================== PROJECT NAME VALIDATION =================== //
 
 
 // =================== PROJECT CREATION ===================

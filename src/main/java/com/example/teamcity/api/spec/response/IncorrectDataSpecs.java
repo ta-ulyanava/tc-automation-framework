@@ -23,5 +23,15 @@ public class IncorrectDataSpecs {
                 ))
                 .build();
     }
+    @Step("Expect 400 Bad Request due to duplicated value '{value}' in field '{field}'")
+    public static ResponseSpecification badRequestDuplicatedField(String entityType, String field, String value) {
+        return new ResponseSpecBuilder()
+                .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
+                .expectBody(anyOf(
+                        containsString("%s %s \"%s\" is already used".formatted(entityType, field, value)),
+                        containsString("%s with this %s already exists: %s".formatted(entityType, field, value))
+                ))
+                .build();
+    }
 
 }

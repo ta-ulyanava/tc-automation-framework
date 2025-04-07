@@ -33,6 +33,16 @@ public final class RandomData {
     public static String getRandomStringWithTestPrefix(int length) {
         return TEST_PREFIX + RandomStringUtils.randomAlphanumeric(Math.max(length - TEST_PREFIX.length(), 1));
     }
+    /**
+     * Generates a random alphanumeric string with a specific length.
+     *
+     * @param length total length of the resulting string including prefix
+     * @return random string of specified length
+     */
+    @Step("Generate random string of length {length}")
+    public static String getRandomString(int length) {
+        return RandomStringUtils.randomAlphanumeric(Math.max(length, 1));
+    }
 
     /**
      * Generates a unique name using the current timestamp and random characters.
