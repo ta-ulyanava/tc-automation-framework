@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 //TODO: Add project helper
-//TODO: Add assertions to verify the project creation via DTO
 //TODO: Add Github/ gilab CI/CD workflow?
 //TODO: Extend fraimework with another endpoints (e.g., search, auth
 //TODO: Add UI tests
@@ -31,10 +30,7 @@ public class ProjectCrudTest extends BaseApiTest {
     public void userCreatesProjectWithMandatoryFieldsOnlyTest() {
         Project project = testData.getProject();
         Project createdProject = userCheckedRequest.getRequest(ApiEndpoint.PROJECTS, Project.class).create(project).as(Project.class);
-
-        softy.assertEquals(createdProject.getId(), project.getId(), "Project ID should match");
-        softy.assertEquals(createdProject.getName(), project.getName(), "Project name should match");
-        softy.assertNotNull(createdProject.getParentProject(), "Parent project should not be null");
+        EntityValidator.validateAllEntityFieldsIgnoring(project, createdProject, List.of("parentProject"), softy);
         // TODO: ?Remove magic string _Root?
         softy.assertEquals(createdProject.getParentProject().getId(), "_Root", "Parent project should be '_Root' by default");
         softy.assertAll();
